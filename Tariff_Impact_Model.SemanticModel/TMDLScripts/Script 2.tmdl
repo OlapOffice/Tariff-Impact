@@ -1,0 +1,69 @@
+
+createOrReplace
+
+	/// Dimension table containing master product data including SKU, category, cost, and sourcing attributes.
+	table Products
+		lineageTag: b2012c82-662c-4f8d-9c3a-a6473b496957
+
+		/// Unique identifier for each product (Stock Keeping Unit).
+		column SKU
+			dataType: string
+			lineageTag: fc5e9bfe-415b-487a-9ae3-7e5230a02d42
+			summarizeBy: none
+			sourceColumn: SKU
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Product category classification for reporting and grouping.
+		column Category
+			dataType: string
+			lineageTag: a86306a8-0bd6-49af-98aa-31c0fe27ce7f
+			summarizeBy: none
+			sourceColumn: Category
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Standard unit cost used for base financial calculations such as COGS.
+		column BaseCost
+			dataType: int64
+			formatString: 0
+			lineageTag: 5c28af7f-c1a8-48af-b70e-e07aa6bb38be
+			summarizeBy: none
+			sourceColumn: BaseCost
+
+			annotation SummarizationSetBy = User
+
+		/// Indicates the country where the product is sourced or manufactured.
+		column CountryOfOrigin
+			dataType: string
+			lineageTag: 56ee08fe-f4bf-46ca-a54c-fd4c53eafcc6
+			summarizeBy: none
+			sourceColumn: CountryOfOrigin
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Foreign key linking product to its supplier entity in the Vendors table.
+		column VendorID
+			dataType: string
+			lineageTag: 305d263c-d460-4248-9264-8fa63a593325
+			summarizeBy: none
+			sourceColumn: VendorID
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Full data import from Excel workbook for product master data.
+		partition Products = m
+			mode: import
+			dataView: full
+			source =
+				let
+					Source = Excel.Workbook(File.Contents(FilePath), null, true),
+					Products_Sheet = Source{[Item="Products",Kind="Sheet"]}[Data],
+					#"Promoted Headers" = Table.PromoteHeaders(Products_Sheet, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"SKU", type text}, {"Category", type text}, {"BaseCost", Int64.Type}, {"CountryOfOrigin", type text}, {"VendorID", type text}})
+				in
+					#"Changed Type"
+
+		annotation PBI_ResultType = Table
+
+		annotation PBI_NavigationStepName = Navigation

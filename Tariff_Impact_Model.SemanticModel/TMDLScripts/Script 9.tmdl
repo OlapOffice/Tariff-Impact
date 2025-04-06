@@ -1,0 +1,55 @@
+createOrReplace
+
+	/// Dimension table containing vendor entities with geographic and risk attributes.
+	/// Supports supply chain, procurement, and compliance reporting.
+	table Vendors
+		lineageTag: d40a1c65-ebcf-40b5-a08a-df94abadb525
+
+		/// Unique identifier for each vendor.
+		/// Used for relationships and entity-level filtering.
+		column VendorID
+			dataType: string
+			lineageTag: 378a6132-7df0-4b86-8ea7-0916eb6c6be2
+			summarizeBy: none
+			sourceColumn: VendorID
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Country in which the vendor is located.
+		/// Enables geographic slicing of vendor-related metrics.
+		column Country
+			dataType: string
+			lineageTag: 50bc7a41-e5c1-4684-82e4-605931a72a48
+			summarizeBy: none
+			sourceColumn: Country
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Numeric risk rating assigned to the vendor.
+		/// Used for vendor risk assessments and segmentation.
+		column RiskRating
+			dataType: int64
+			formatString: 0
+			lineageTag: 58c6d882-6c06-4890-a033-f05b20374b17
+			summarizeBy: none
+			sourceColumn: RiskRating
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Partition importing vendor data from Excel source.
+		/// Applies header promotion and type enforcement.
+		partition Vendors = m
+			mode: import
+			source =
+				// Loads and transforms vendor data from Excel.
+				let
+					Source = Excel.Workbook(File.Contents(FilePath), null, true),
+					Vendors_Sheet = Source{[Item="Vendors",Kind="Sheet"]}[Data],
+					#"Promoted Headers" = Table.PromoteHeaders(Vendors_Sheet, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"VendorID", type text}, {"Country", type text}, {"RiskRating", Int64.Type}})
+				in
+					#"Changed Type"
+
+		annotation PBI_ResultType = Table
+
+		annotation PBI_NavigationStepName = Navigation

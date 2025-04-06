@@ -1,0 +1,36 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+extendedProperty TabularEditor_DeploymentMetadata =
+		{
+		  "User": "DESKTOP-FU6THE2\\OLAPS",
+		  "Time": "2025-04-03T14:34:22.5654046-05:00",
+		  "ClientMachine": "DESKTOP-FU6THE2",
+		  "DeploymentMode": "SaveUI",
+		  "TabularEditorBuild": "2.24.8878.22493"
+		}
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBIDesktopVersion = 2.141.1253.0 (25.03)+74f9999a1e95f78c739f3ea2b96ba340e9ba8729
+
+annotation PBI_QueryOrder = ["FilePath","Products","Sales","Scenarios","Tariffs","Vendors"]
+
+annotation PBI_ProTooling = ["TMDLView_Desktop","DevMode"]
+
+annotation __TEdtr = 1
+
+ref table Products
+ref table Sales
+ref table Scenarios
+ref table Tariffs
+ref table Vendors
+ref table WaterfallSteps
+
+ref cultureInfo en-US
+

@@ -1,0 +1,506 @@
+createOrReplace
+
+	model Model
+		culture: en-US
+		defaultPowerBIDataSourceVersion: powerBI_V3
+		sourceQueryCulture: en-US
+		dataAccessOptions
+			legacyRedirects
+			returnErrorValuesAsNull
+
+		table Products
+			lineageTag: b2012c82-662c-4f8d-9c3a-a6473b496957
+
+			column SKU
+				dataType: string
+				lineageTag: fc5e9bfe-415b-487a-9ae3-7e5230a02d42
+				summarizeBy: none
+				sourceColumn: SKU
+
+				annotation SummarizationSetBy = Automatic
+
+			column Category
+				dataType: string
+				lineageTag: a86306a8-0bd6-49af-98aa-31c0fe27ce7f
+				summarizeBy: none
+				sourceColumn: Category
+
+				annotation SummarizationSetBy = Automatic
+
+			column BaseCost
+				dataType: int64
+				formatString: 0
+				lineageTag: 5c28af7f-c1a8-48af-b70e-e07aa6bb38be
+				summarizeBy: none
+				sourceColumn: BaseCost
+
+				annotation SummarizationSetBy = User
+
+			column CountryOfOrigin
+				dataType: string
+				lineageTag: 56ee08fe-f4bf-46ca-a54c-fd4c53eafcc6
+				summarizeBy: none
+				sourceColumn: CountryOfOrigin
+
+				annotation SummarizationSetBy = Automatic
+
+			column VendorID
+				dataType: string
+				lineageTag: 305d263c-d460-4248-9264-8fa63a593325
+				summarizeBy: none
+				sourceColumn: VendorID
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Products = m
+				mode: import
+				source =
+						let
+						    Source = Excel.Workbook(File.Contents(FilePath), null, true),
+						    Products_Sheet = Source{[Item="Products",Kind="Sheet"]}[Data],
+						    #"Promoted Headers" = Table.PromoteHeaders(Products_Sheet, [PromoteAllScalars=true]),
+						    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"SKU", type text}, {"Category", type text}, {"BaseCost", Int64.Type}, {"CountryOfOrigin", type text}, {"VendorID", type text}})
+						in
+						    #"Changed Type"
+
+			annotation PBI_ResultType = Table
+
+			annotation PBI_NavigationStepName = Navigation
+
+		table Sales
+			lineageTag: 96ee9c62-c713-4269-93b3-1b33a9eef605
+
+			measure 'Tariff Cost' = ```
+					
+					SUMX (
+					    Sales,
+					    Sales[Units Sold] *
+					    RELATED(Products[BaseCost]) *
+					    LOOKUPVALUE(
+					        Tariffs[TariffRate],
+					        Tariffs[Country],
+					        RELATED(Products[CountryOfOrigin])
+					    ) 
+					    //* SELECTEDVALUE(Scenarios[TariffMultiplier], 1)
+					)
+					
+					```
+				formatString: #,##0
+				displayFolder: Measures\Tariffs
+				lineageTag: 4ff409e4-d4bb-4e17-8caf-a38a70c05ae1
+
+				annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+			measure 'Total Units Sold' = SUM(Sales[Units Sold])
+				formatString: #,##0
+				displayFolder: Measures
+				lineageTag: 2c98650b-e881-4fcf-a9a3-7237dd40942b
+
+			measure Revenue = SUM(Sales[OriginalRevenue])
+				formatString: #,##0
+				displayFolder: Measures
+				lineageTag: a7d9b292-9dcb-4eaa-9364-0c5a109e9940
+
+			measure COGS = ```
+					SUM(Sales[OriginalCOGS])
+					
+					```
+				formatString: #,##0
+				displayFolder: Measures
+				lineageTag: 38c8b951-f991-4fbf-9cf4-dc95e9b59351
+
+			measure 'Gross Margin' = ```
+					[Revenue] - [COGS]
+					
+					```
+				formatString: #,##0
+				displayFolder: Measures
+				lineageTag: 97ccb848-79d8-443a-950c-21e33742a6e2
+
+				annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+			measure 'Tariff Pct Revenue' = ```
+					DIVIDE([Tariff Cost], [Revenue])
+					
+					```
+				formatString: #,##0.00 %
+				displayFolder: Measures\Tariffs
+				lineageTag: 069dc0a6-3ae4-4c88-9588-7a6241834518
+
+				annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+			measure 'Gross Margin Pct' = ```
+					DIVIDE([Gross Margin], [Revenue])
+					
+					```
+				formatString: #,##0.0 %
+				displayFolder: Measures
+				lineageTag: 38653fc5-cb5b-422a-8fd5-5df917cf0df9
+
+				annotation PBI_FormatHint = {"isCustom":true}
+
+			measure 'Tariff COGS' = [COGS] + [Tariff Cost]
+				formatString: #,0
+				displayFolder: Measures\Tariffs
+				lineageTag: 824efa4b-4e3c-4592-b108-8d8f36decde0
+
+				annotation PBI_FormatHint = {"isDecimal":true}
+
+			measure 'Tariff Gross Margin' = [Revenue] - [Tariff COGS]
+				formatString: #,0
+				displayFolder: Measures\Tariffs
+				lineageTag: a0b4c4a6-d1a0-464b-8b77-123f3ae37303
+
+				annotation PBI_FormatHint = {"isDecimal":true}
+
+			measure 'Tariff Gross Margin Pct' = DIVIDE([Tariff Gross Margin], [Revenue])
+				formatString: 0.0%;-0.0%;0.0%
+				displayFolder: Measures\Tariffs
+				lineageTag: dc228c57-3ec7-4497-a0c4-28a768fc9a4b
+
+			measure 'Tariff GM%' = IF ([Tariff Gross Margin Pct] - [Gross Margin Pct] <> 0, [Tariff Gross Margin Pct] - [Gross Margin Pct])
+				formatString: 0.0%;-0.0%;0.0%
+				displayFolder: Measures\Tariffs
+				lineageTag: 79230427-9d72-4f81-ab72-9e12f4cffd05
+
+			column Date
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 5d09f3bb-cda1-4e65-80e8-3393088051b7
+				summarizeBy: none
+				sourceColumn: Date
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+				annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+			column SKU
+				dataType: string
+				lineageTag: 65eded8a-6a5a-4a2c-ac15-7b84508a0566
+				summarizeBy: none
+				sourceColumn: SKU
+
+				annotation SummarizationSetBy = Automatic
+
+			column 'Units Sold'
+				dataType: int64
+				isHidden
+				formatString: 0
+				lineageTag: 9cafca42-6bd7-46d7-a60d-05099a0f9746
+				summarizeBy: none
+				sourceColumn: Units Sold
+
+				changedProperty = IsHidden
+
+				annotation SummarizationSetBy = User
+
+			column OriginalRevenue
+				dataType: int64
+				isHidden
+				formatString: 0
+				lineageTag: 07771669-e558-4fe5-ac00-7b6656de23c4
+				summarizeBy: none
+				sourceColumn: OriginalRevenue
+
+				changedProperty = IsHidden
+
+				annotation SummarizationSetBy = User
+
+			column OriginalCOGS
+				dataType: int64
+				isHidden
+				formatString: 0
+				lineageTag: 2c36043d-7ab8-4413-b597-b0de5c1a808a
+				summarizeBy: none
+				sourceColumn: OriginalCOGS
+
+				changedProperty = IsHidden
+
+				annotation SummarizationSetBy = User
+
+			partition Sales = m
+				mode: import
+				source =
+						let
+						    Source = Excel.Workbook(File.Contents(FilePath), null, true),
+						    Sales_Sheet = Source{[Item="Sales",Kind="Sheet"]}[Data],
+						    #"Promoted Headers" = Table.PromoteHeaders(Sales_Sheet, [PromoteAllScalars=true]),
+						    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Date", type date}, {"SKU", type text}, {"UnitsSold", Int64.Type}, {"Revenue", Int64.Type}, {"COGS", Int64.Type}}),
+						    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"UnitsSold", "Units Sold"}, {"Revenue", "OriginalRevenue"}, {"COGS", "OriginalCOGS"}})
+						in
+						    #"Renamed Columns"
+
+			annotation PBI_ResultType = Table
+
+			annotation PBI_NavigationStepName = Navigation
+
+		table Scenarios
+			isHidden
+			lineageTag: ba2fa3ba-875c-483f-a519-b4ca92c0ea17
+
+			column ScenarioID
+				dataType: int64
+				isHidden
+				formatString: 0
+				lineageTag: ea13840c-0a9d-4d2f-938f-d73743aadc77
+				summarizeBy: count
+				sourceColumn: ScenarioID
+
+				changedProperty = IsHidden
+
+				annotation SummarizationSetBy = Automatic
+
+			column ScenarioName
+				dataType: string
+				isHidden
+				lineageTag: a7f5f69b-20f4-4824-99f3-096d7d893b2b
+				summarizeBy: none
+				sourceColumn: ScenarioName
+				sortByColumn: ScenarioID
+
+				changedProperty = SortByColumn
+
+				changedProperty = IsHidden
+
+				annotation SummarizationSetBy = Automatic
+
+			column TariffMultiplier
+				dataType: double
+				isHidden
+				lineageTag: 51b07a50-f9a4-4e9e-a363-dae3077b09cb
+				summarizeBy: none
+				sourceColumn: TariffMultiplier
+
+				changedProperty = IsHidden
+
+				annotation SummarizationSetBy = User
+
+				annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+			partition Scenarios = m
+				mode: import
+				source =
+						let
+						    Source = Excel.Workbook(File.Contents(FilePath), null, true),
+						    Scenarios_Sheet = Source{[Item="Scenarios",Kind="Sheet"]}[Data],
+						    #"Promoted Headers" = Table.PromoteHeaders(Scenarios_Sheet, [PromoteAllScalars=true]),
+						    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"ScenarioID", Int64.Type}, {"ScenarioName", type text}, {"TariffMultiplier", type number}})
+						in
+						    #"Changed Type"
+
+			changedProperty = IsHidden
+
+			annotation PBI_ResultType = Table
+
+			annotation PBI_NavigationStepName = Navigation
+
+		table Tariffs
+			lineageTag: 5e8cceef-d16f-4f2d-8598-2adc6b177562
+
+			measure 'Tariff Rate' = SUM ([TariffRate])
+				formatString: 0%;-0%;0%
+				lineageTag: 4b382f0a-df61-42f5-8ac8-01885dab828e
+
+			column Country
+				dataType: string
+				lineageTag: 1846ca4f-358b-428a-bb6a-0e13e3af6c27
+				summarizeBy: none
+				sourceColumn: Country
+
+				annotation SummarizationSetBy = Automatic
+
+			column TariffRate
+				dataType: double
+				isHidden
+				formatString: 0%;-0%;0%
+				lineageTag: 703a27b8-3e4c-4018-b3ce-bbbcd62cb23b
+				summarizeBy: none
+				sourceColumn: TariffRate
+
+				changedProperty = IsHidden
+
+				annotation SummarizationSetBy = User
+
+			column EffectiveDate
+				dataType: dateTime
+				formatString: yyyy-mm-dd
+				lineageTag: 266678fe-204a-4064-bf6a-f5efddbaea34
+				summarizeBy: none
+				sourceColumn: EffectiveDate
+
+				annotation SummarizationSetBy = Automatic
+
+				annotation UnderlyingDateTimeDataType = Date
+
+				annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+			partition Tariffs = m
+				mode: import
+				source =
+						let
+						    Source = Excel.Workbook(File.Contents(FilePath), null, true),
+						    Tariffs_Sheet = Source{[Item="Tariffs",Kind="Sheet"]}[Data],
+						    #"Promoted Headers" = Table.PromoteHeaders(Tariffs_Sheet, [PromoteAllScalars=true]),
+						    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Country", type text}, {"TariffRate", type number}, {"EffectiveDate", type date}}),
+						    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"TariffRate", "TariffRate"}})
+						in
+						    #"Renamed Columns"
+
+			annotation PBI_ResultType = Table
+
+			annotation PBI_NavigationStepName = Navigation
+
+		table Vendors
+			lineageTag: d40a1c65-ebcf-40b5-a08a-df94abadb525
+
+			column VendorID
+				dataType: string
+				lineageTag: 378a6132-7df0-4b86-8ea7-0916eb6c6be2
+				summarizeBy: none
+				sourceColumn: VendorID
+
+				annotation SummarizationSetBy = Automatic
+
+			column Country
+				dataType: string
+				lineageTag: 50bc7a41-e5c1-4684-82e4-605931a72a48
+				summarizeBy: none
+				sourceColumn: Country
+
+				annotation SummarizationSetBy = Automatic
+
+			column RiskRating
+				dataType: int64
+				formatString: 0
+				lineageTag: 58c6d882-6c06-4890-a033-f05b20374b17
+				summarizeBy: none
+				sourceColumn: RiskRating
+
+				annotation SummarizationSetBy = Automatic
+
+			partition Vendors = m
+				mode: import
+				source =
+						let
+						    Source = Excel.Workbook(File.Contents(FilePath), null, true),
+						    Vendors_Sheet = Source{[Item="Vendors",Kind="Sheet"]}[Data],
+						    #"Promoted Headers" = Table.PromoteHeaders(Vendors_Sheet, [PromoteAllScalars=true]),
+						    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"VendorID", type text}, {"Country", type text}, {"RiskRating", Int64.Type}})
+						in
+						    #"Changed Type"
+
+			annotation PBI_ResultType = Table
+
+			annotation PBI_NavigationStepName = Navigation
+
+		table WaterfallSteps
+			isHidden
+			lineageTag: a748cde3-1ef7-4c30-9a04-4b5be7e36085
+
+			measure WaterfallValue = ```
+					
+					SWITCH(
+					    SELECTEDVALUE(WaterfallSteps[Step]),
+					    "Revenue", [Revenue],
+					    "COGS", -[COGS],
+					 //   ,"Gross Margin", [Base Gross Margin]
+					    "Tariff Cost", -[Tariff Cost]
+					)
+					
+					```
+				formatString: #,0
+				isHidden
+				lineageTag: 5485c3bb-157b-421d-8a7f-eaf916d7c01e
+
+			column Step
+				isHidden
+				lineageTag: b4710f97-790f-4ade-a4f8-dde146572e34
+				summarizeBy: none
+				isNameInferred
+				sourceColumn: [Step]
+				sortByColumn: SortOrder
+
+				annotation SummarizationSetBy = Automatic
+
+			column SortOrder
+				isHidden
+				formatString: 0
+				lineageTag: 8bbaf351-5608-41bf-82f0-a4d694a84f48
+				summarizeBy: sum
+				isNameInferred
+				sourceColumn: [SortOrder]
+
+				annotation SummarizationSetBy = Automatic
+
+			partition WaterfallSteps = calculated
+				mode: import
+				source = ```
+						DATATABLE(
+						    "Step", STRING,
+						    "SortOrder", INTEGER,
+						    {
+						        {"Revenue", 1},
+						        {"COGS", 2},
+						        {"Gross Margin", 3},
+						        {"Tariff Cost", 4},
+						        {"Tariff Gross Margin", 5}
+						    }
+						)
+						
+						```
+
+			annotation PBI_Id = 6ff0012ce18e43a0a4921d603dff9bb2
+
+		relationship AutoDetected_073b16aa-f88f-4552-ba62-3fe95ce5f721
+			crossFilteringBehavior: bothDirections
+			fromColumn: Sales.SKU
+			toColumn: Products.SKU
+
+		relationship dedf499f-3c3d-c931-a265-66ac0cb36ebd
+			crossFilteringBehavior: bothDirections
+			fromCardinality: one
+			fromColumn: Products.CountryOfOrigin
+			toColumn: Tariffs.Country
+
+		relationship c1bdb849-9a5c-db33-f9f8-bd59028b2798
+			crossFilteringBehavior: bothDirections
+			fromColumn: Products.VendorID
+			toColumn: Vendors.VendorID
+
+		cultureInfo en-US
+
+			linguisticMetadata =
+					{
+					  "Version": "1.0.0",
+					  "Language": "en-US"
+					}
+				contentType: json
+
+		expression FilePath = "C:\Users\OLAPS\OneDrive\OLAP Office\PowerBI\Technical\Examples\Tariffs\Tariff_Impact_GitHub_Package\Tariff_Impact_Model-NewB.xlsx" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+			lineageTag: 18b81fa7-5ee8-4e8c-b4ea-91ba5118a522
+
+			annotation PBI_NavigationStepName = Navigation
+
+			annotation PBI_ResultType = Text
+
+		extendedProperty TabularEditor_DeploymentMetadata =
+				{
+				  "User": "DESKTOP-FU6THE2\\OLAPS",
+				  "Time": "2025-04-03T14:34:22.5654046-05:00",
+				  "ClientMachine": "DESKTOP-FU6THE2",
+				  "DeploymentMode": "SaveUI",
+				  "TabularEditorBuild": "2.24.8878.22493"
+				}
+
+		annotation __PBI_TimeIntelligenceEnabled = 0
+
+		annotation PBIDesktopVersion = 2.141.1253.0 (25.03)+74f9999a1e95f78c739f3ea2b96ba340e9ba8729
+
+		annotation PBI_QueryOrder = ["FilePath","Products","Sales","Scenarios","Tariffs","Vendors"]
+
+		annotation PBI_ProTooling = ["TMDLView_Desktop"]
+
+		annotation __TEdtr = 1
+

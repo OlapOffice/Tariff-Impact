@@ -1,0 +1,7 @@
+expression FilePath = "C:\Users\OLAPS\OneDrive\OLAP Office\PowerBI\Technical\Examples\Tariffs\Tariff_Impact_GitHub_Package\Project\Tariff_Impact_Model.xlsx" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 18b81fa7-5ee8-4e8c-b4ea-91ba5118a522
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

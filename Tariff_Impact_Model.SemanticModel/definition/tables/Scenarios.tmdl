@@ -1,0 +1,70 @@
+/// Parameter table used to define different what-if tariff scenarios for modeling impact analysis.
+table Scenarios
+	isHidden
+	lineageTag: ba2fa3ba-875c-483f-a519-b4ca92c0ea17
+
+	/// Unique identifier for each scenario entry. Used for sorting and relationships.
+	column ScenarioID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ea13840c-0a9d-4d2f-938f-d73743aadc77
+		summarizeBy: none
+		sourceColumn: ScenarioID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	/// Descriptive name for each scenario. Used in slicers or labels.
+	column ScenarioName
+		dataType: string
+		isHidden
+		lineageTag: a7f5f69b-20f4-4824-99f3-096d7d893b2b
+		summarizeBy: none
+		sourceColumn: ScenarioName
+		sortByColumn: ScenarioID
+
+		changedProperty = SortByColumn
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Multiplier factor applied to tariff rates for scenario-based forecasting.
+	column TariffMultiplier
+		dataType: double
+		isHidden
+		lineageTag: 51b07a50-f9a4-4e9e-a363-dae3077b09cb
+		summarizeBy: none
+		sourceColumn: TariffMultiplier
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Full data import of scenario parameters used in tariff modeling.
+	partition Scenarios = m
+		mode: import
+		dataView: full
+		source =
+				let
+					Source = Excel.Workbook(File.Contents(FilePath), null, true),
+					Scenarios_Sheet = Source{[Item="Scenarios",Kind="Sheet"]}[Data],
+					#"Promoted Headers" = Table.PromoteHeaders(Scenarios_Sheet, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {
+						{"ScenarioID", Int64.Type},
+						{"ScenarioName", type text},
+						{"TariffMultiplier", type number}
+					})
+				in
+					#"Changed Type"
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

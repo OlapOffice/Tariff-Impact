@@ -1,0 +1,69 @@
+/// Table containing tariff rates by country and effective date; serves as a fact table for trade or pricing analytics.
+table Tariffs
+	lineageTag: 5e8cceef-d16f-4f2d-8598-2adc6b177562
+
+	/// Measure calculating the aggregated tariff rate.
+	/// Useful for summarizing total applied tariffs over a selection.
+	measure 'Tariff Rates' = IF(SUM ([Tariff Rate]) <> 0, SUM ([Tariff Rate]), BLANK())
+		formatString: 0%;-0%;0%
+		displayFolder: Measures
+		lineageTag: 4b382f0a-df61-42f5-8ac8-01885dab828e
+
+	/// Country associated with the applied tariff.
+	/// Used for geographic segmentation in reports.
+	column Country
+		dataType: string
+		lineageTag: 1846ca4f-358b-428a-bb6a-0e13e3af6c27
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Raw tariff rate value. Hidden from report view and used internally in calculations.
+	column 'Tariff Rate'
+		dataType: double
+		isHidden
+		formatString: 0%;-0%;0%
+		lineageTag: 703a27b8-3e4c-4018-b3ce-bbbcd62cb23b
+		summarizeBy: none
+		sourceColumn: Tariff Rate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	/// Date when the tariff became effective.
+	/// Enables time-based analysis or filtering.
+	column 'Effective Date'
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 266678fe-204a-4064-bf6a-f5efddbaea34
+		summarizeBy: none
+		sourceColumn: Effective Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	/// Partition loading data from an Excel source.
+	/// Loads the Tariffs worksheet and promotes headers, applies type transformations.
+	partition Tariffs = m
+		mode: import
+		source =
+				// Extracts and transforms data from the Excel source.
+				// Promotes headers, ensures correct data types.
+				let
+					Source = Excel.Workbook(File.Contents(FilePath), null, true),
+					Tariffs_Sheet = Source{[Item="Tariffs",Kind="Sheet"]}[Data],
+					#"Promoted Headers" = Table.PromoteHeaders(Tariffs_Sheet, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Country", type text}, {"TariffRate", type number}, {"EffectiveDate", type date}}),
+					#"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"TariffRate", "Tariff Rate"}, {"EffectiveDate", "Effective Date"}})
+				in
+					#"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

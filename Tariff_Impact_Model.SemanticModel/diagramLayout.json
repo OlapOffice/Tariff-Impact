@@ -1,0 +1,99 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 50.000000000000014,
+        "y": 104.41174280263749
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 334.18269278110961,
+            "y": 224.21728500817059
+          },
+          "nodeIndex": "Products",
+          "nodeLineageTag": "b2012c82-662c-4f8d-9c3a-a6473b496957",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 50.000000000000014,
+            "y": 254.41174280263749
+          },
+          "nodeIndex": "Sales",
+          "nodeLineageTag": "96ee9c62-c713-4269-93b3-1b33a9eef605",
+          "size": {
+            "height": 295,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 422.55804017781634,
+            "y": 509.70587140131875
+          },
+          "nodeIndex": "Scenarios",
+          "nodeLineageTag": "ba2fa3ba-875c-483f-a519-b4ca92c0ea17",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 124.55804017781645,
+            "y": 0
+          },
+          "nodeIndex": "Tariffs",
+          "nodeLineageTag": "5e8cceef-d16f-4f2d-8598-2adc6b177562",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 618.38448636284227,
+            "y": 97.33403624537857
+          },
+          "nodeIndex": "Vendors",
+          "nodeLineageTag": "d40a1c65-ebcf-40b5-a08a-df94abadb525",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 852.38448636284227,
+            "y": 230.85293570065937
+          },
+          "nodeIndex": "WaterfallSteps",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 60.898876404494388,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

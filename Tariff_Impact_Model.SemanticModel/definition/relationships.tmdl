@@ -1,0 +1,16 @@
+relationship AutoDetected_073b16aa-f88f-4552-ba62-3fe95ce5f721
+	crossFilteringBehavior: bothDirections
+	fromColumn: Sales.SKU
+	toColumn: Products.SKU
+
+relationship dedf499f-3c3d-c931-a265-66ac0cb36ebd
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: Products.'Country Of Origin'
+	toColumn: Tariffs.Country
+
+relationship c1bdb849-9a5c-db33-f9f8-bd59028b2798
+	crossFilteringBehavior: bothDirections
+	fromColumn: Products.'Vendor ID'
+	toColumn: Vendors.'Vendor ID'
+

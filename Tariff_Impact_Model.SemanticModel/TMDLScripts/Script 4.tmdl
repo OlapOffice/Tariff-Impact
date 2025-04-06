@@ -1,0 +1,188 @@
+
+createOrReplace
+
+	/// Fact table capturing transaction-level sales data including units sold, revenue, and cost.
+	table Sales
+		lineageTag: 96ee9c62-c713-4269-93b3-1b33a9eef605
+
+		/// Total product cost including tariffs. Calculated as Units * BaseCost * TariffRate.
+		measure 'Tariff Cost' = ```
+			SUMX (
+				Sales,
+				Sales[Units Sold] *
+				RELATED(Products[BaseCost]) *
+				LOOKUPVALUE(
+					Tariffs[TariffRate],
+					Tariffs[Country],
+					RELATED(Products[CountryOfOrigin])
+				) 
+				//* SELECTEDVALUE(Scenarios[TariffMultiplier], 1)
+			)
+			```
+			formatString: #,##0
+			displayFolder: Measures\Tariffs
+			lineageTag: 4ff409e4-d4bb-4e17-8caf-a38a70c05ae1
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		/// Aggregated count of units sold. Primary metric for volume analysis.
+		measure 'Total Units Sold' = SUM(Sales[Units Sold])
+			formatString: #,##0
+			displayFolder: Measures
+			lineageTag: 2c98650b-e881-4fcf-a9a3-7237dd40942b
+
+		/// Total revenue aggregated across all transactions.
+		measure Revenue = SUM(Sales[OriginalRevenue])
+			formatString: #,##0
+			displayFolder: Measures
+			lineageTag: a7d9b292-9dcb-4eaa-9364-0c5a109e9940
+
+		/// Total cost of goods sold aggregated across transactions.
+		measure COGS = ```
+			SUM(Sales[OriginalCOGS])
+			```
+			formatString: #,##0
+			displayFolder: Measures
+			lineageTag: 38c8b951-f991-4fbf-9cf4-dc95e9b59351
+
+		/// Gross margin before considering tariffs. Calculated as Revenue - COGS.
+		measure 'Gross Margin' = ```
+			[Revenue] - [COGS]
+			```
+			formatString: #,##0
+			displayFolder: Measures
+			lineageTag: 97ccb848-79d8-443a-950c-21e33742a6e2
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		/// Percentage of revenue spent on tariffs. Useful for cost impact analysis.
+		measure 'Tariff Pct Revenue' = ```
+			DIVIDE([Tariff Cost], [Revenue])
+			```
+			formatString: #,##0.00 %
+			displayFolder: Measures\Tariffs
+			lineageTag: 069dc0a6-3ae4-4c88-9588-7a6241834518
+
+			annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+		/// Gross margin expressed as a percentage of revenue.
+		measure 'Gross Margin Pct' = ```
+			DIVIDE([Gross Margin], [Revenue])
+			```
+			formatString: #,##0.0 %
+			displayFolder: Measures
+			lineageTag: 38653fc5-cb5b-422a-8fd5-5df917cf0df9
+
+			annotation PBI_FormatHint = {"isCustom":true}
+
+		/// Updated cost including tariffs. Used for revised margin analysis.
+		measure 'Tariff COGS' = [COGS] + [Tariff Cost]
+			formatString: #,0
+			displayFolder: Measures\Tariffs
+			lineageTag: 824efa4b-4e3c-4592-b108-8d8f36decde0
+
+			annotation PBI_FormatHint = {"isDecimal":true}
+
+		/// Margin after including tariffs in the cost calculation.
+		measure 'Tariff Gross Margin' = [Revenue] - [Tariff COGS]
+			formatString: #,0
+			displayFolder: Measures\Tariffs
+			lineageTag: a0b4c4a6-d1a0-464b-8b77-123f3ae37303
+
+			annotation PBI_FormatHint = {"isDecimal":true}
+
+		/// Tariff-adjusted margin percentage.
+		measure 'Tariff Gross Margin Pct' = DIVIDE([Tariff Gross Margin], [Revenue])
+			formatString: 0.0%;-0.0%;0.0%
+			displayFolder: Measures\Tariffs
+			lineageTag: dc228c57-3ec7-4497-a0c4-28a768fc9a4b
+
+		/// Delta between tariff and base gross margin percentages.
+		measure 'Tariff GM%' = IF ([Tariff Gross Margin Pct] - [Gross Margin Pct] <> 0, [Tariff Gross Margin Pct] - [Gross Margin Pct])
+			formatString: 0.0%;-0.0%;0.0%
+			displayFolder: Measures\Tariffs
+			lineageTag: 79230427-9d72-4f81-ab72-9e12f4cffd05
+
+		/// Date of the sales transaction. Used in time-based analysis.
+		column Date
+			dataType: dateTime
+			formatString: yyyy-mm-dd
+			lineageTag: 5d09f3bb-cda1-4e65-80e8-3393088051b7
+			summarizeBy: none
+			sourceColumn: Date
+
+			annotation SummarizationSetBy = Automatic
+			annotation UnderlyingDateTimeDataType = Date
+			annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+		/// Foreign key linking sales to product SKU.
+		column SKU
+			dataType: string
+			lineageTag: 65eded8a-6a5a-4a2c-ac15-7b84508a0566
+			summarizeBy: none
+			sourceColumn: SKU
+
+			annotation SummarizationSetBy = Automatic
+
+		/// Total units sold for the corresponding transaction line.
+		column 'Units Sold'
+			dataType: int64
+			isHidden
+			formatString: 0
+			lineageTag: 9cafca42-6bd7-46d7-a60d-05099a0f9746
+			summarizeBy: none
+			sourceColumn: Units Sold
+
+			changedProperty = IsHidden
+			annotation SummarizationSetBy = User
+
+		/// Raw revenue captured at the transaction level prior to any adjustments.
+		column OriginalRevenue
+			dataType: int64
+			isHidden
+			formatString: 0
+			lineageTag: 07771669-e558-4fe5-ac00-7b6656de23c4
+			summarizeBy: none
+			sourceColumn: OriginalRevenue
+
+			changedProperty = IsHidden
+			annotation SummarizationSetBy = User
+
+		/// Raw cost of goods sold for the transaction line.
+		column OriginalCOGS
+			dataType: int64
+			isHidden
+			formatString: 0
+			lineageTag: 2c36043d-7ab8-4413-b597-b0de5c1a808a
+			summarizeBy: none
+			sourceColumn: OriginalCOGS
+
+			changedProperty = IsHidden
+			annotation SummarizationSetBy = User
+
+		/// Full data import from Excel workbook for sales transactions.
+		partition Sales = m
+			mode: import
+			dataView: full
+			source =
+				let
+					Source = Excel.Workbook(File.Contents(FilePath), null, true),
+					Sales_Sheet = Source{[Item="Sales",Kind="Sheet"]}[Data],
+					#"Promoted Headers" = Table.PromoteHeaders(Sales_Sheet, [PromoteAllScalars=true]),
+					#"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {
+						{"Date", each try Date.From(_) otherwise null}, 
+						{"SKU", type text}, 
+						{"UnitsSold", Int64.Type}, 
+						{"Revenue", Int64.Type}, 
+						{"COGS", Int64.Type}
+					}),
+					#"Renamed Columns" = Table.RenameColumns(#"Changed Type", {
+						{"UnitsSold", "Units Sold"}, 
+						{"Revenue", "OriginalRevenue"}, 
+						{"COGS", "OriginalCOGS"}
+					})
+				in
+					#"Renamed Columns"
+
+		annotation PBI_ResultType = Table
+		annotation PBI_NavigationStepName = Navigation

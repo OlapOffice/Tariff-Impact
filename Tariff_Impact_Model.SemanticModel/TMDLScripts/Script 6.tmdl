@@ -1,0 +1,58 @@
+createOrReplace
+
+	table Tariffs
+		lineageTag: 5e8cceef-d16f-4f2d-8598-2adc6b177562
+
+		measure 'Tariff Rate' = SUM ([TariffRate])
+			formatString: 0%;-0%;0%
+			lineageTag: 4b382f0a-df61-42f5-8ac8-01885dab828e
+
+		column Country
+			dataType: string
+			lineageTag: 1846ca4f-358b-428a-bb6a-0e13e3af6c27
+			summarizeBy: none
+			sourceColumn: Country
+
+			annotation SummarizationSetBy = Automatic
+
+		column TariffRate
+			dataType: double
+			isHidden
+			formatString: 0%;-0%;0%
+			lineageTag: 703a27b8-3e4c-4018-b3ce-bbbcd62cb23b
+			summarizeBy: none
+			sourceColumn: TariffRate
+
+			changedProperty = IsHidden
+
+			annotation SummarizationSetBy = User
+
+		column EffectiveDate
+			dataType: dateTime
+			formatString: yyyy-mm-dd
+			lineageTag: 266678fe-204a-4064-bf6a-f5efddbaea34
+			summarizeBy: none
+			sourceColumn: EffectiveDate
+
+			annotation SummarizationSetBy = Automatic
+
+			annotation UnderlyingDateTimeDataType = Date
+
+			annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+		partition Tariffs = m
+			mode: import
+			source =
+					let
+					    Source = Excel.Workbook(File.Contents(FilePath), null, true),
+					    Tariffs_Sheet = Source{[Item="Tariffs",Kind="Sheet"]}[Data],
+					    #"Promoted Headers" = Table.PromoteHeaders(Tariffs_Sheet, [PromoteAllScalars=true]),
+					    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Country", type text}, {"TariffRate", type number}, {"EffectiveDate", type date}}),
+					    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"TariffRate", "TariffRate"}})
+					in
+					    #"Renamed Columns"
+
+		annotation PBI_ResultType = Table
+
+		annotation PBI_NavigationStepName = Navigation
+
