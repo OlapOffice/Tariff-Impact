@@ -33,7 +33,7 @@ Feel free to use and modify the Power BI project file to suit your needs. You ca
 We welcome contributions to the Rebate Impact Power BI project! If you have any improvements, suggestions, or bug fixes, please submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
-This project is licensed under the MIT License - see the * LICENSE * file for details.
+This project is licensed under the MIT License - see the * LICENSE * file in the root directory for details.
 
 ## Contact
 For any questions or support, please contact Howard Taylor, Director of Business Intelligence @ Olap Office, Inc. Email: Howard.Taylor@OlapOffice.com
