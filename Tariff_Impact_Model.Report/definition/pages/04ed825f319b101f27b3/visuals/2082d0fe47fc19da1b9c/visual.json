@@ -276,6 +276,13 @@
                   "Value": "'Total Tariff Cost'"
                 }
               }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
             }
           }
         }

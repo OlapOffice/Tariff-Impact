@@ -276,6 +276,13 @@
                   "Value": "'Total Tariff Gross Margin'"
                 }
               }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
             }
           }
         }

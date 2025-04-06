@@ -4,10 +4,10 @@
   "position": {
     "x": 915.39393939393938,
     "y": 10.666666666666666,
-    "z": 16000,
+    "z": 14000,
     "height": 43.636363636363633,
     "width": 357.81818181818181,
-    "tabOrder": 15000
+    "tabOrder": 13000
   },
   "visual": {
     "visualType": "pageNavigator",
@@ -18,7 +18,7 @@
             "transparency": {
               "expr": {
                 "Literal": {
-                  "Value": "60D"
+                  "Value": "100D"
                 }
               }
             }

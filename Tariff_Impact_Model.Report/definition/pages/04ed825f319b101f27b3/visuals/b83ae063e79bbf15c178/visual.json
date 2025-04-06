@@ -276,6 +276,13 @@
                   "Value": "'Total Tariff COGS'"
                 }
               }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
             }
           }
         }
