@@ -13,7 +13,7 @@ To get started with the Rebate Impact Power BI project, follow these steps:
 
 1. **Clone the Repository**: Use the following command to clone the repository to your local machine:
    ```bash
-   git clone https://github.com/yourusername/rebate-impact-powerbi.git
+   git clone https://github.com/OlapOffice/Tariff-Impact.git
    ```
 
 2. **Open Power BI**: Launch Power BI Desktop on your computer.
