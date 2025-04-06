@@ -1,7 +1,7 @@
 # Rebate Impact Power BI Project
 
 ## Overview
-Welcome to the Rebate Impact Power BI project! This repository contains the Power BI files and resources needed to analyze and visualize the impact of rebates on our business. The project aims to provide insights into how rebates affect sales, customer behavior, and overall business performance.
+Welcome to the Rebate Impact Power BI project! This repository contains the Power BI files and resources needed to analyze and visualize the impact of rebates on our business. The project aims to provide insights into how rebates affect sales, customer behavior, and overall business performance. This is just one way to demonstrate the impact and there are other ways. Please feel free to contact Howard.Taylor@OlapOffice.com if you want to discuss other ways to achieve the same result, or if you want to add any additional features.
 
 ## Features
 - **Interactive Dashboards**: Explore various aspects of rebate impact through interactive visualizations.
