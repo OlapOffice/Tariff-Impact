@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "90392dd27700793012a0",
   "position": {
-    "x": 9,
-    "y": 11,
+    "x": 8.7272727272727266,
+    "y": 10.666666666666666,
     "z": 0,
-    "height": 43,
-    "width": 1258,
+    "height": 43.636363636363633,
+    "width": 896,
     "tabOrder": 0
   },
   "visual": {
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Shock US$ Tariff Exposure & Profitability Impact Dashboard",
+                    "value": "Shock US Country TariffsDashboard",
                     "textStyle": {
                       "fontWeight": "bold",
                       "fontSize": "18pt"

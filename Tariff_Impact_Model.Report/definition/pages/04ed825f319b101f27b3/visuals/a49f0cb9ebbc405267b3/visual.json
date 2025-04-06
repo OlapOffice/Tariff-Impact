@@ -2,12 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.6.0/schema.json",
   "name": "a49f0cb9ebbc405267b3",
   "position": {
-    "x": 1022,
-    "y": 10,
+    "x": 244,
+    "y": 4,
     "z": 15000,
     "height": 32,
-    "width": 78,
-    "tabOrder": 15000
+    "width": 78
   },
   "visual": {
     "visualType": "textbox",
@@ -34,5 +33,6 @@
     },
     "drillFilterOtherVisuals": true
   },
+  "parentGroupName": "b43356eb336200b9c21f",
   "howCreated": "Copilot"
 }
