@@ -47,6 +47,12 @@ table Tariffs
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
+	column 'Country Tariff' = [Country] & ": " & FORMAT([Tariff Rate], "0%")
+		lineageTag: e30d7e5d-8f00-42f4-8c01-d4f4e054bf8f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	/// Partition loading data from an Excel source.
 	/// Loads the Tariffs worksheet and promotes headers, applies type transformations.
 	partition Tariffs = m

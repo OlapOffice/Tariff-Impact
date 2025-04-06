@@ -46,7 +46,7 @@
                   "Property": "COGS"
                 }
               },
-              "queryRef": "Sales.Total COGS",
+              "queryRef": "Sales.COGS",
               "nativeQueryRef": "COGS"
             }
           ]
@@ -106,7 +106,7 @@
                   "Property": "Tariff Rates"
                 }
               },
-              "queryRef": "Tariffs.Tariff Rate",
+              "queryRef": "Tariffs.Tariff Rates",
               "nativeQueryRef": "Tariff Rates"
             }
           ]
@@ -116,39 +116,7 @@
     "objects": {
       "dataPoint": [
         {
-          "properties": {
-            "fillRule": {
-              "linearGradient2": {
-                "min": {
-                  "color": {
-                    "expr": {
-                      "Literal": {
-                        "Value": "'minColor'"
-                      }
-                    }
-                  }
-                },
-                "max": {
-                  "color": {
-                    "expr": {
-                      "Literal": {
-                        "Value": "'maxColor'"
-                      }
-                    }
-                  }
-                },
-                "nullColoringStrategy": {
-                  "strategy": {
-                    "expr": {
-                      "Literal": {
-                        "Value": "'asZero'"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+          "properties": {}
         },
         {
           "properties": {
@@ -221,15 +189,7 @@
       ],
       "mapControls": [
         {
-          "properties": {
-            "showZoomButtons": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
+          "properties": {}
         }
       ],
       "categoryLabels": [
@@ -239,32 +199,6 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "heatMap": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "mapStyles": [
-        {
-          "properties": {
-            "mapTheme": {
-              "expr": {
-                "Literal": {
-                  "Value": "'road'"
                 }
               }
             }
