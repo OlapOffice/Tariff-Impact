@@ -59,6 +59,23 @@
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Tariffs"
+                  }
+                },
+                "Property": "Country"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
       }
     },
     "objects": {
@@ -214,7 +231,7 @@
                           "max": {
                             "color": {
                               "Literal": {
-                                "Value": "'#3a6c9b'"
+                                "Value": "'#6b91b4'"
                               }
                             }
                           },
