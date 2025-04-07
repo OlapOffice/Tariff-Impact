@@ -109,9 +109,12 @@ table Sales
 	/// Foreign key linking sales to product SKU.
 	column SKU
 		dataType: string
+		isHidden
 		lineageTag: 65eded8a-6a5a-4a2c-ac15-7b84508a0566
 		summarizeBy: none
 		sourceColumn: SKU
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

@@ -1,7 +1,13 @@
 # US$ Rebate Profitability Impact - Power BI Project
 
 ## Overview
-Welcome to the Rebate Impact Power BI project! This repository contains the Power BI files and resources needed to analyze and visualize the impact of rebates on our business. The project aims to provide insights into how rebates affect sales, customer behavior, and overall business performance. This is just one way to demonstrate the impact and there are other ways. Please feel free to contact Howard.Taylor@OlapOffice.com if you want to discuss other ways to achieve the same result, or if you want to add any additional features.
+Welcome to the Rebate Impact Power BI project! This repository contains the Power BI files and resources needed to analyze and visualize the impact of rebates on your business. The project aims to: 
+
+1. provide insights into how rebates affect sales, customer behavior, and overall business performance. 
+2. companies see the impact of tariffs on your gross margins by product SKU, country and over time. 
+
+This is just one way to demonstrate the impact and there are other ways. 
+Please feel free to contact Howard.Taylor@OlapOffice.com if you want to discuss other ways to achieve the same result, or if you want to add any additional features.
 
 ## Features
 - **Interactive Dashboards**: Explore various aspects of rebate impact through interactive visualizations.
@@ -38,6 +44,4 @@ This project is licensed under the MIT License - see the * LICENSE * file in the
 ## Contact
 For any questions or support, please contact Howard Taylor, Director of Business Intelligence @ Olap Office, Inc. Email: Howard.Taylor@OlapOffice.com
 
----
-
-I hope this helps! Let me know if you need any further adjustments or additional information.
+I hope this helps! 

@@ -6,7 +6,7 @@
     "y": 0,
     "z": 13000,
     "height": 39.757575757575758,
-    "width": 371.39393939393938,
+    "width": 352.969696969697,
     "tabOrder": 12000
   },
   "visual": {
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "US$ Profitability and Exposure Analysis",
+                    "value": "US$ Profitability & Exposure Analysis",
                     "textStyle": {
                       "fontWeight": "bold",
                       "fontFamily": "Segoe UI",

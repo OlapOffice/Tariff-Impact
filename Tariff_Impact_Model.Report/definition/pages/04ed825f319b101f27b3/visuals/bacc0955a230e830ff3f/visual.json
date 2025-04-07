@@ -3,11 +3,10 @@
   "name": "bacc0955a230e830ff3f",
   "position": {
     "x": 0,
-    "y": 4,
+    "y": 3.8787878787878789,
     "z": 13000,
     "height": 32,
-    "width": 68,
-    "tabOrder": 0
+    "width": 68
   },
   "visual": {
     "visualType": "textbox",
